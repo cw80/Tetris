@@ -90,6 +90,15 @@ struct Tetromino {
     }
 }
 
+// MARK: - Game State
+
+enum GameState {
+    case start
+    case playing
+    case paused
+    case gameOver
+}
+
 // MARK: - GameScene
 
 class GameScene: SKScene {
@@ -133,9 +142,9 @@ class GameScene: SKScene {
     var scoreLabel: SKLabelNode!
     var levelLabel: SKLabelNode!
     var nextLabel: SKLabelNode!
-    var gameOverLabel: SKLabelNode?
 
-    var isGameOver = false
+    // Game state
+    var gameState: GameState = .start
 
     // Touch tracking
     var touchStartPoint: CGPoint?
@@ -145,27 +154,32 @@ class GameScene: SKScene {
     // Border node
     var borderNode: SKShapeNode!
 
+    // UI layer nodes
+    var startScreenNode: SKNode?
+    var pauseOverlayNode: SKNode?
+    var gameOverOverlayNode: SKNode?
+    var pauseButton: SKNode?
+    var endGameButton: SKNode?
+
     // MARK: - Scene Setup
 
     override func didMove(to view: SKView) {
         backgroundColor = SKColor(red: 0.1, green: 0.1, blue: 0.15, alpha: 1.0)
-        setupBoard()
-        setupLabels()
-        spawnNewPiece()
+        showStartScreen()
     }
 
     func setupBoard() {
         // Calculate cell size to fit the board within the scene width with padding.
         let horizontalPadding: CGFloat = 40
         let availableWidth = size.width - horizontalPadding
-        let availableHeight = size.height * 0.7
+        let availableHeight = size.height * 0.65
         cellSize = min(availableWidth / CGFloat(numCols), availableHeight / CGFloat(numRows))
 
         let boardWidth = cellSize * CGFloat(numCols)
         let boardHeight = cellSize * CGFloat(numRows)
         boardOrigin = CGPoint(
             x: (size.width - boardWidth) / 2,
-            y: (size.height - boardHeight) / 2 - 40
+            y: (size.height - boardHeight) / 2 - 60
         )
 
         // Initialize empty board
@@ -214,10 +228,11 @@ class GameScene: SKScene {
 
     func setupLabels() {
         let boardTop = boardOrigin.y + cellSize * CGFloat(numRows)
-        let labelY = boardTop + 20
+        let boardWidth = cellSize * CGFloat(numCols)
+        let labelY = boardTop + 12
 
         scoreLabel = SKLabelNode(fontNamed: "Helvetica-Bold")
-        scoreLabel.fontSize = 20
+        scoreLabel.fontSize = 18
         scoreLabel.fontColor = .white
         scoreLabel.horizontalAlignmentMode = .left
         scoreLabel.position = CGPoint(x: boardOrigin.x, y: labelY)
@@ -225,25 +240,295 @@ class GameScene: SKScene {
         addChild(scoreLabel)
 
         levelLabel = SKLabelNode(fontNamed: "Helvetica-Bold")
-        levelLabel.fontSize = 20
+        levelLabel.fontSize = 18
         levelLabel.fontColor = .white
         levelLabel.horizontalAlignmentMode = .right
-        let boardRight = boardOrigin.x + cellSize * CGFloat(numCols)
+        let boardRight = boardOrigin.x + boardWidth
         levelLabel.position = CGPoint(x: boardRight, y: labelY)
         levelLabel.text = "Level: 1"
         addChild(levelLabel)
 
+        // Next piece label below the board
         nextLabel = SKLabelNode(fontNamed: "Helvetica-Bold")
-        nextLabel.fontSize = 16
+        nextLabel.fontSize = 14
         nextLabel.fontColor = .white
         nextLabel.horizontalAlignmentMode = .left
-        nextLabel.position = CGPoint(x: boardRight + 10, y: boardTop - 20)
+        nextLabel.position = CGPoint(x: boardOrigin.x, y: boardOrigin.y - 24)
         nextLabel.text = "Next:"
-        // Hide next label if it would go off-screen
-        if boardRight + 10 + 80 > size.width {
-            nextLabel.position = CGPoint(x: boardOrigin.x, y: boardOrigin.y - 30)
-        }
         addChild(nextLabel)
+    }
+
+    func setupButtons() {
+        let boardTop = boardOrigin.y + cellSize * CGFloat(numRows)
+        let buttonY = boardTop + 44
+
+        // Pause button
+        pauseButton = makeButton(text: "Pause", name: "pauseButton",
+                                 position: CGPoint(x: boardOrigin.x + 40, y: buttonY))
+        addChild(pauseButton!)
+
+        // End Game button
+        let boardRight = boardOrigin.x + cellSize * CGFloat(numCols)
+        endGameButton = makeButton(text: "End", name: "endGameButton",
+                                   position: CGPoint(x: boardRight - 40, y: buttonY))
+        addChild(endGameButton!)
+    }
+
+    func makeButton(text: String, name: String, position: CGPoint) -> SKNode {
+        let container = SKNode()
+        container.name = name
+        container.position = position
+
+        let bg = SKShapeNode(rectOf: CGSize(width: 70, height: 30), cornerRadius: 6)
+        bg.fillColor = SKColor(white: 0.25, alpha: 1.0)
+        bg.strokeColor = SKColor(white: 0.5, alpha: 1.0)
+        bg.lineWidth = 1
+        bg.name = name
+        container.addChild(bg)
+
+        let label = SKLabelNode(fontNamed: "Helvetica-Bold")
+        label.fontSize = 14
+        label.fontColor = .white
+        label.verticalAlignmentMode = .center
+        label.text = text
+        label.name = name
+        container.addChild(label)
+
+        container.zPosition = 5
+        return container
+    }
+
+    // MARK: - Start Screen
+
+    func showStartScreen() {
+        gameState = .start
+        let node = SKNode()
+        node.zPosition = 20
+
+        // Title
+        let title = SKLabelNode(fontNamed: "Helvetica-Bold")
+        title.fontSize = 48
+        title.fontColor = .cyan
+        title.position = CGPoint(x: size.width / 2, y: size.height / 2 + 80)
+        title.text = "Craig's TETRIS"
+        node.addChild(title)
+
+        // Decorative blocks around the title
+        let blockColors: [SKColor] = [.cyan, .yellow, .purple, .green, .red, .blue, .orange]
+        for i in 0..<7 {
+            let block = SKShapeNode(rectOf: CGSize(width: 20, height: 20), cornerRadius: 3)
+            block.fillColor = blockColors[i]
+            block.strokeColor = blockColors[i].withAlphaComponent(0.7)
+            let angle = CGFloat(i) * (.pi * 2 / 7)
+            block.position = CGPoint(
+                x: size.width / 2 + cos(angle) * 110,
+                y: size.height / 2 + 80 + sin(angle) * 50
+            )
+            let rotate = SKAction.rotate(byAngle: .pi * 2, duration: 4)
+            block.run(SKAction.repeatForever(rotate))
+            node.addChild(block)
+        }
+
+        // Play button
+        let playContainer = SKNode()
+        playContainer.name = "playButton"
+        playContainer.position = CGPoint(x: size.width / 2, y: size.height / 2 - 20)
+
+        let playBg = SKShapeNode(rectOf: CGSize(width: 160, height: 50), cornerRadius: 10)
+        playBg.fillColor = SKColor(red: 0.1, green: 0.6, blue: 0.3, alpha: 1.0)
+        playBg.strokeColor = SKColor(red: 0.2, green: 0.8, blue: 0.4, alpha: 1.0)
+        playBg.lineWidth = 2
+        playBg.name = "playButton"
+        playContainer.addChild(playBg)
+
+        let playLabel = SKLabelNode(fontNamed: "Helvetica-Bold")
+        playLabel.fontSize = 24
+        playLabel.fontColor = .white
+        playLabel.verticalAlignmentMode = .center
+        playLabel.text = "PLAY"
+        playLabel.name = "playButton"
+        playContainer.addChild(playLabel)
+
+        // Pulse animation
+        let scaleUp = SKAction.scale(to: 1.05, duration: 0.8)
+        let scaleDown = SKAction.scale(to: 0.95, duration: 0.8)
+        scaleUp.timingMode = .easeInEaseOut
+        scaleDown.timingMode = .easeInEaseOut
+        playContainer.run(SKAction.repeatForever(SKAction.sequence([scaleUp, scaleDown])))
+
+        node.addChild(playContainer)
+
+        // Controls hint
+        let hint = SKLabelNode(fontNamed: "Helvetica")
+        hint.fontSize = 13
+        hint.fontColor = SKColor.lightGray
+        hint.position = CGPoint(x: size.width / 2, y: size.height / 2 - 80)
+        hint.text = "Tap: Rotate  |  Drag: Move  |  Swipe Down: Drop"
+        node.addChild(hint)
+
+        addChild(node)
+        startScreenNode = node
+    }
+
+    // MARK: - Pause Overlay
+
+    func showPauseOverlay() {
+        gameState = .paused
+
+        let node = SKNode()
+        node.zPosition = 20
+
+        // Dim background
+        let dimBg = SKShapeNode(rectOf: CGSize(width: size.width, height: size.height))
+        dimBg.fillColor = SKColor(white: 0, alpha: 0.6)
+        dimBg.strokeColor = .clear
+        dimBg.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        dimBg.name = "pauseOverlay"
+        node.addChild(dimBg)
+
+        // Paused label
+        let label = SKLabelNode(fontNamed: "Helvetica-Bold")
+        label.fontSize = 40
+        label.fontColor = .white
+        label.position = CGPoint(x: size.width / 2, y: size.height / 2 + 40)
+        label.text = "PAUSED"
+        node.addChild(label)
+
+        // Resume button
+        let resumeContainer = SKNode()
+        resumeContainer.name = "resumeButton"
+        resumeContainer.position = CGPoint(x: size.width / 2, y: size.height / 2 - 30)
+
+        let resumeBg = SKShapeNode(rectOf: CGSize(width: 140, height: 44), cornerRadius: 8)
+        resumeBg.fillColor = SKColor(red: 0.1, green: 0.6, blue: 0.3, alpha: 1.0)
+        resumeBg.strokeColor = SKColor(red: 0.2, green: 0.8, blue: 0.4, alpha: 1.0)
+        resumeBg.lineWidth = 2
+        resumeBg.name = "resumeButton"
+        resumeContainer.addChild(resumeBg)
+
+        let resumeLabel = SKLabelNode(fontNamed: "Helvetica-Bold")
+        resumeLabel.fontSize = 20
+        resumeLabel.fontColor = .white
+        resumeLabel.verticalAlignmentMode = .center
+        resumeLabel.text = "RESUME"
+        resumeLabel.name = "resumeButton"
+        resumeContainer.addChild(resumeLabel)
+
+        node.addChild(resumeContainer)
+
+        addChild(node)
+        pauseOverlayNode = node
+    }
+
+    func hidePauseOverlay() {
+        pauseOverlayNode?.removeFromParent()
+        pauseOverlayNode = nil
+        gameState = .playing
+        lastDropTime = 0 // Reset so the piece doesn't jump after unpause
+    }
+
+    // MARK: - Game Over Overlay
+
+    func showGameOverOverlay() {
+        gameState = .gameOver
+        activeNodes.forEach { $0.removeFromParent() }
+        activeNodes.removeAll()
+
+        let node = SKNode()
+        node.zPosition = 20
+
+        // Dim background
+        let dimBg = SKShapeNode(rectOf: CGSize(width: size.width, height: size.height))
+        dimBg.fillColor = SKColor(white: 0, alpha: 0.6)
+        dimBg.strokeColor = .clear
+        dimBg.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        node.addChild(dimBg)
+
+        // Game Over label
+        let label = SKLabelNode(fontNamed: "Helvetica-Bold")
+        label.fontSize = 36
+        label.fontColor = .white
+        label.position = CGPoint(x: size.width / 2, y: size.height / 2 + 60)
+        label.text = "GAME OVER"
+        node.addChild(label)
+
+        // Final score
+        let scoreLine = SKLabelNode(fontNamed: "Helvetica")
+        scoreLine.fontSize = 22
+        scoreLine.fontColor = SKColor.lightGray
+        scoreLine.position = CGPoint(x: size.width / 2, y: size.height / 2 + 20)
+        scoreLine.text = "Score: \(score)  |  Level: \(level)"
+        node.addChild(scoreLine)
+
+        // Play Again button
+        let playAgainContainer = SKNode()
+        playAgainContainer.name = "playAgainButton"
+        playAgainContainer.position = CGPoint(x: size.width / 2, y: size.height / 2 - 40)
+
+        let playAgainBg = SKShapeNode(rectOf: CGSize(width: 160, height: 44), cornerRadius: 8)
+        playAgainBg.fillColor = SKColor(red: 0.1, green: 0.6, blue: 0.3, alpha: 1.0)
+        playAgainBg.strokeColor = SKColor(red: 0.2, green: 0.8, blue: 0.4, alpha: 1.0)
+        playAgainBg.lineWidth = 2
+        playAgainBg.name = "playAgainButton"
+        playAgainContainer.addChild(playAgainBg)
+
+        let playAgainLabel = SKLabelNode(fontNamed: "Helvetica-Bold")
+        playAgainLabel.fontSize = 20
+        playAgainLabel.fontColor = .white
+        playAgainLabel.verticalAlignmentMode = .center
+        playAgainLabel.text = "PLAY AGAIN"
+        playAgainLabel.name = "playAgainButton"
+        playAgainContainer.addChild(playAgainLabel)
+
+        node.addChild(playAgainContainer)
+
+        addChild(node)
+        gameOverOverlayNode = node
+    }
+
+    // MARK: - Game Lifecycle
+
+    func startGame() {
+        startScreenNode?.removeFromParent()
+        startScreenNode = nil
+
+        setupBoard()
+        setupLabels()
+        setupButtons()
+        gameState = .playing
+        spawnNewPiece()
+    }
+
+    func endGame() {
+        // Triggered by End button — go straight to game over
+        showGameOverOverlay()
+    }
+
+    func restartGame() {
+        gameOverOverlayNode?.removeFromParent()
+        gameOverOverlayNode = nil
+
+        removeAllChildren()
+
+        board = []
+        blockNodes = []
+        activeNodes = []
+        nextPieceNodes = []
+        currentPiece = nil
+        nextPiece = nil
+        score = 0
+        level = 1
+        linesCleared = 0
+        dropInterval = 0.8
+        lastDropTime = 0
+        pauseButton = nil
+        endGameButton = nil
+
+        setupBoard()
+        setupLabels()
+        setupButtons()
+        gameState = .playing
+        spawnNewPiece()
     }
 
     // MARK: - Piece Management
@@ -270,7 +555,7 @@ class GameScene: SKScene {
             // Try one row higher
             currentPiece.row = numRows
             if !isValidPosition(currentPiece) {
-                triggerGameOver()
+                showGameOverOverlay()
                 return
             }
         }
@@ -335,8 +620,8 @@ class GameScene: SKScene {
         guard let piece = nextPiece else { return }
 
         let previewCellSize = cellSize * 0.6
-        let baseX = nextLabel.position.x
-        let baseY = nextLabel.position.y - 30
+        let baseX = nextLabel.position.x + 50
+        let baseY = nextLabel.position.y + 2
 
         for (r, c) in piece.type.rotations[0] {
             let node = SKShapeNode(
@@ -362,7 +647,7 @@ class GameScene: SKScene {
         for (r, c) in piece.absolutePositions {
             guard r >= 0 && r < numRows && c >= 0 && c < numCols else {
                 // Block above the board means game over
-                triggerGameOver()
+                showGameOverOverlay()
                 return
             }
             board[r][c] = piece.type.color
@@ -436,53 +721,6 @@ class GameScene: SKScene {
         levelLabel.text = "Level: \(level)"
     }
 
-    // MARK: - Game Over
-
-    func triggerGameOver() {
-        isGameOver = true
-        activeNodes.forEach { $0.removeFromParent() }
-        activeNodes.removeAll()
-
-        gameOverLabel = SKLabelNode(fontNamed: "Helvetica-Bold")
-        gameOverLabel?.fontSize = 36
-        gameOverLabel?.fontColor = .white
-        gameOverLabel?.position = CGPoint(x: size.width / 2, y: size.height / 2 + 20)
-        gameOverLabel?.text = "GAME OVER"
-        gameOverLabel?.zPosition = 10
-        addChild(gameOverLabel!)
-
-        let tapLabel = SKLabelNode(fontNamed: "Helvetica")
-        tapLabel.fontSize = 18
-        tapLabel.fontColor = .lightGray
-        tapLabel.position = CGPoint(x: size.width / 2, y: size.height / 2 - 20)
-        tapLabel.text = "Tap to restart"
-        tapLabel.zPosition = 10
-        tapLabel.name = "restartLabel"
-        addChild(tapLabel)
-    }
-
-    func restartGame() {
-        removeAllChildren()
-
-        board = []
-        blockNodes = []
-        activeNodes = []
-        nextPieceNodes = []
-        currentPiece = nil
-        nextPiece = nil
-        score = 0
-        level = 1
-        linesCleared = 0
-        dropInterval = 0.8
-        lastDropTime = 0
-        isGameOver = false
-        gameOverLabel = nil
-
-        setupBoard()
-        setupLabels()
-        spawnNewPiece()
-    }
-
     // MARK: - Movement
 
     func movePiece(rowDelta: Int, colDelta: Int) -> Bool {
@@ -530,22 +768,56 @@ class GameScene: SKScene {
 
     // MARK: - Touch Handling
 
+    /// Check if a touch hit a named node.
+    func nodeName(at point: CGPoint) -> String? {
+        let hitNodes = nodes(at: point)
+        for node in hitNodes {
+            if let name = node.name {
+                return name
+            }
+        }
+        return nil
+    }
+
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
+        let location = touch.location(in: self)
+        let tappedName = nodeName(at: location)
 
-        if isGameOver {
-            restartGame()
-            return
+        switch gameState {
+        case .start:
+            if tappedName == "playButton" {
+                startGame()
+            }
+
+        case .playing:
+            if tappedName == "pauseButton" {
+                showPauseOverlay()
+                return
+            }
+            if tappedName == "endGameButton" {
+                endGame()
+                return
+            }
+            touchStartPoint = location
+            touchStartTime = touch.timestamp
+            lastHorizontalStep = 0
+
+        case .paused:
+            if tappedName == "resumeButton" {
+                hidePauseOverlay()
+            }
+
+        case .gameOver:
+            if tappedName == "playAgainButton" {
+                restartGame()
+            }
         }
-
-        touchStartPoint = touch.location(in: self)
-        touchStartTime = touch.timestamp
-        lastHorizontalStep = 0
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard gameState == .playing else { return }
         guard let touch = touches.first, let startPoint = touchStartPoint else { return }
-        guard !isGameOver else { return }
 
         let currentPoint = touch.location(in: self)
         let dx = currentPoint.x - startPoint.x
@@ -572,17 +844,20 @@ class GameScene: SKScene {
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard gameState == .playing else { return }
         guard let touch = touches.first, let startPoint = touchStartPoint else { return }
-        guard !isGameOver else { return }
 
         let endPoint = touch.location(in: self)
         let dx = endPoint.x - startPoint.x
         let dy = endPoint.y - startPoint.y
         let elapsed = touch.timestamp - (touchStartTime ?? touch.timestamp)
 
-        // Quick tap — rotate
+        // Quick tap — rotate (only if not on a button)
         if abs(dx) < 20 && abs(dy) < 20 && elapsed < 0.3 {
-            rotatePiece()
+            let tappedName = nodeName(at: endPoint)
+            if tappedName != "pauseButton" && tappedName != "endGameButton" {
+                rotatePiece()
+            }
         }
         // Fast swipe down — hard drop
         else if dy < -80 && elapsed < 0.3 {
@@ -601,7 +876,7 @@ class GameScene: SKScene {
     // MARK: - Game Loop
 
     override func update(_ currentTime: TimeInterval) {
-        guard !isGameOver else { return }
+        guard gameState == .playing else { return }
 
         if lastDropTime == 0 {
             lastDropTime = currentTime
