@@ -307,10 +307,10 @@ class GameScene: SKScene {
 
         // Title
         let title = SKLabelNode(fontNamed: "Helvetica-Bold")
-        title.fontSize = 48
+        title.fontSize = 40
         title.fontColor = .cyan
         title.position = CGPoint(x: size.width / 2, y: size.height / 2 + 80)
-        title.text = "Craig's TETRIS"
+        title.text = "FALLING BLOCKS"
         node.addChild(title)
 
         // Decorative blocks around the title

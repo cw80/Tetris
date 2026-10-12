@@ -1,14 +1,14 @@
 //
-//  TetrisTests.swift
-//  TetrisTests
+//  FallingBlocksTests.swift
+//  FallingBlocksTests
 //
 //  Created by Craig Wild on 13/09/2026.
 //
 
 import Testing
-@testable import Tetris
+@testable import FallingBlocks
 
-struct TetrisTests {
+struct FallingBlocksTests {
 
     @Test func example() async throws {
         // Write your test here and use APIs like `#expect(...)` to check expected conditions.

@@ -24,9 +24,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		44C575703056BAD30032AED8 /* Tetris.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tetris.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		44C575893056BAD50032AED8 /* TetrisTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TetrisTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		44C575933056BAD50032AED8 /* TetrisUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TetrisUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		44C575703056BAD30032AED8 /* FallingBlocks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FallingBlocks.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		44C575893056BAD50032AED8 /* FallingBlocksTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FallingBlocksTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		44C575933056BAD50032AED8 /* FallingBlocksUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FallingBlocksUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -98,9 +98,9 @@
 		44C575713056BAD30032AED8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				44C575703056BAD30032AED8 /* Tetris.app */,
-				44C575893056BAD50032AED8 /* TetrisTests.xctest */,
-				44C575933056BAD50032AED8 /* TetrisUITests.xctest */,
+				44C575703056BAD30032AED8 /* FallingBlocks.app */,
+				44C575893056BAD50032AED8 /* FallingBlocksTests.xctest */,
+				44C575933056BAD50032AED8 /* FallingBlocksUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -127,7 +127,7 @@
 			packageProductDependencies = (
 			);
 			productName = Tetris;
-			productReference = 44C575703056BAD30032AED8 /* Tetris.app */;
+			productReference = 44C575703056BAD30032AED8 /* FallingBlocks.app */;
 			productType = "com.apple.product-type.application";
 		};
 		44C575883056BAD50032AED8 /* TetrisTests */ = {
@@ -150,7 +150,7 @@
 			packageProductDependencies = (
 			);
 			productName = TetrisTests;
-			productReference = 44C575893056BAD50032AED8 /* TetrisTests.xctest */;
+			productReference = 44C575893056BAD50032AED8 /* FallingBlocksTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		44C575923056BAD50032AED8 /* TetrisUITests */ = {
@@ -173,7 +173,7 @@
 			packageProductDependencies = (
 			);
 			productName = TetrisUITests;
-			productReference = 44C575933056BAD50032AED8 /* TetrisUITests.xctest */;
+			productReference = 44C575933056BAD50032AED8 /* FallingBlocksUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -287,23 +287,29 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 49Z2S8XJ96;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tetris/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Falling Blocks";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.puzzle-games";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = Main;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Craig-Wild.Tetris";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = "Craig-Wild.FallingBlocks";
+				PRODUCT_NAME = FallingBlocks;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -319,23 +325,29 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 49Z2S8XJ96;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tetris/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Falling Blocks";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.puzzle-games";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = Main;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Craig-Wild.Tetris";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = "Craig-Wild.FallingBlocks";
+				PRODUCT_NAME = FallingBlocks;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -470,42 +482,42 @@
 		44C575A23056BAD50032AED8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/FallingBlocks.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FallingBlocks";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Craig-Wild.TetrisTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = "Craig-Wild.FallingBlocksTests";
+				PRODUCT_NAME = FallingBlocksTests;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tetris.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Tetris";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FallingBlocks.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FallingBlocks";
 			};
 			name = Debug;
 		};
 		44C575A33056BAD50032AED8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/FallingBlocks.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FallingBlocks";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Craig-Wild.TetrisTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = "Craig-Wild.FallingBlocksTests";
+				PRODUCT_NAME = FallingBlocksTests;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tetris.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Tetris";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FallingBlocks.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FallingBlocks";
 			};
 			name = Release;
 		};
@@ -516,8 +528,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Craig-Wild.TetrisUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = "Craig-Wild.FallingBlocksUITests";
+				PRODUCT_NAME = FallingBlocksUITests;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -535,8 +547,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "Craig-Wild.TetrisUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = "Craig-Wild.FallingBlocksUITests";
+				PRODUCT_NAME = FallingBlocksUITests;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;

@@ -1,13 +1,13 @@
 //
-//  TetrisUITestsLaunchTests.swift
-//  TetrisUITests
+//  FallingBlocksUITestsLaunchTests.swift
+//  FallingBlocksUITests
 //
 //  Created by Craig Wild on 13/09/2026.
 //
 
 import XCTest
 
-final class TetrisUITestsLaunchTests: XCTestCase {
+final class FallingBlocksUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
